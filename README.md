@@ -21,8 +21,10 @@ and download the file. When the download is finished, navigate to the folder whe
 The list ALL the servers which will be affected by the upcoming reboot, you will need to run:
 
 ```bash
-./cs-reboot-info
+./cs-reboot-info username apikey
 ```
+
+where `username` is your Rackspace username, and `apikey` is your Rackspace API key. If you do not know your API key, please follow [these steps](#finding-your-api-key).
 
 This is the default and simplest usage. You can also modify behaviour by these options:
 
@@ -30,6 +32,9 @@ This is the default and simplest usage. You can also modify behaviour by these o
 
 will output everything into a local CSV file in the same directory called `cs-reboot-info-output.csv`. This flag is optional.
 
-## --localtime
+### --localtime
 
 will convert all of the UTC times to your local timezone. 
+
+## Finding your API key
+blah
