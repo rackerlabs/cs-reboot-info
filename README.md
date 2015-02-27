@@ -1,5 +1,5 @@
 # cs-reboot
 Cloud Servers tool to identify affected servers.
 
-# Installation
-1. Install gophercloud
+# Running cs-reboot-info
+cs-reboot-info *username* *api_key*
