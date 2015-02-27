@@ -13,7 +13,6 @@ import (
 
 func main() {
 	outputCSV := *flag.Bool("csv", false, "Output a CSV file")
-	useLocaltime := *flag.Bool("localtime", false, "Use local timestamps instead of UTC")
 
 	flag.Parse()
 
@@ -39,10 +38,6 @@ func main() {
 	fmt.Printf("Regions with a compute endpoint: %#v\n", regions)
 	if fg {
 		fmt.Println("You do have a first-gen endpoint, too.")
-	}
-
-	if useLocaltime {
-		fmt.Println("Dummy switch so Go shuts up about unused variables!")
 	}
 
 	// Iterate through regions
