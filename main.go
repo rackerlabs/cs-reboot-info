@@ -34,9 +34,12 @@ func main() {
 		fmt.Printf("Unable to authenticate: %v", err)
 	}
 
-	regions := Regions(provider, opts)
+	regions, fg := Regions(provider, opts)
 
 	fmt.Printf("Regions with a compute endpoint: %#v\n", regions)
+	if fg {
+		fmt.Println("You do have a first-gen endpoint, too.")
+	}
 
 	if useLocaltime {
 		fmt.Println("Dummy switch so Go shuts up about unused variables!")
@@ -54,9 +57,9 @@ func main() {
 	}
 }
 
-// Regions acquires the service catalog and returns a slice of every region that contains a first-
-// or next-gen compute endpoint.
-func Regions(provider *gophercloud.ProviderClient, opts gophercloud.AuthOptions) []string {
+// Regions acquires the service catalog and returns a slice of every region that contains a next-gen
+// server endpoint, and a boolean indicating whether or not this customer has access to FG servers.
+func Regions(provider *gophercloud.ProviderClient, opts gophercloud.AuthOptions) ([]string, bool) {
 	service := rackspace.NewIdentityV2(provider)
 
 	result := tokens.Create(service, tokens.WrapOptions(opts))
@@ -66,15 +69,20 @@ func Regions(provider *gophercloud.ProviderClient, opts gophercloud.AuthOptions)
 		os.Exit(1)
 	}
 
-	regions := make([]string, 5)
+	var regions []string
+	var fg bool
 	for _, entry := range catalog.Entries {
-		if entry.Name == "compute" {
+		if entry.Type == "compute" {
 			for _, endpoint := range entry.Endpoints {
-				regions = append(regions, endpoint.Region)
+				if endpoint.Region == "" {
+					fg = true
+				} else {
+					regions = append(regions, endpoint.Region)
+				}
 			}
 		}
 	}
-	return regions
+	return regions, fg
 }
 
 // ShowTime renders a time as both UTC and guessed local TZ
