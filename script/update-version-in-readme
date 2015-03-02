@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+# Update version in README.md
+
+set -e
+
+ROOT=$(dirname $0)/..
+cd ${ROOT}
+
+if [ -z "$1" ]; then
+  echo "Usage: $0 NEW_VERSION"
+  echo "Example: $0 1.1"
+  exit 1
+fi
+new_version=$1
+
+sed -i.bak "s#releases/[^/]*/#releases/$new_version/#g" README.md
+rm README.md.bak
+
+echo "Links in README.md updated to version $new_version."
+echo "Please remember to commit updated README.md and push it to GitHub."
