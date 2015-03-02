@@ -20,7 +20,6 @@ RAX_USERNAME=drgsites
 RAX_REGION=IAD
 CONTAINER_NAME=cs-reboot-info
 IDENTITY_URL=https://identity.api.rackspacecloud.com/v2.0
-CF_API_URL=https://storage101.iad3.clouddrive.com/v1/MossoCloudFS_a4792cf6-5b6e-49ea-b7d6-fe4fb7856b6f
 
 # Auth
 response=$(curl -s -X POST $IDENTITY_URL/tokens \
