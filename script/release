@@ -14,7 +14,7 @@ git pull
 script/cross
 script/checksum
 cdn_ssl_base_url=$(script/publish-to-test | grep 'cdn_ssl_base_url' | awk '{print $2}')
-script/verify-sha1 $cdn_ssl_base_url
+script/verify $cdn_ssl_base_url
 if [$? -ne 0]; then
     exit $?
 fi
