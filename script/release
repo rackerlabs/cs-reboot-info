@@ -13,4 +13,10 @@ fi
 git pull
 script/cross
 script/checksum
-script/publish
+cdn_ssl_base_url=$(script/publish-to-test | grep 'cdn_ssl_base_url' | awk '{print $2}')
+script/verify-sha1 $cdn_ssl_base_url
+if [$? -ne 0]; then
+    exit $?
+fi
+app_version=$(script/publish-to-prod | grep 'app_version_published' | awk '{print $2}')
+script/update-version-in-readme $app_version
