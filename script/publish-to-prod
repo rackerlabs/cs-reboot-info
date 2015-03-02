@@ -41,3 +41,5 @@ for f in bin/cs-reboot-info_*; do
 	       -H 'X-Auth-Token: '$token \
 	       --data-binary @$f
 done
+
+echo "app_version_published: $app_version"
