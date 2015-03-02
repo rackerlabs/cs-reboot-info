@@ -21,7 +21,11 @@ func outputCSV(entries []entry) {
 		fmt.Println("Error writing header to CSV: ", err)
 	}
 	for _, e := range entries {
-		record := []string{e.GenType, e.Region, e.Server.ID, e.Server.Name, e.WindowStart.String(), e.WindowEnd.String(), e.WindowStart.Local().String(), e.WindowEnd.Local().String()}
+		region := e.Region
+		if e.GenType == "First Gen" {
+			region = ""
+		}
+		record := []string{e.GenType, region, e.Server.ID, e.Server.Name, e.WindowStart.String(), e.WindowEnd.String(), e.WindowStart.Local().String(), e.WindowEnd.Local().String()}
 		err := writer.Write(record)
 		if err != nil {
 			fmt.Println("Error writing row to CSV: ", err)

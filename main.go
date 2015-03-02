@@ -19,7 +19,7 @@ import (
 const (
 	metadataKey     = "rax:reboot_window"
 	metadataTimeFmt = "2006-01-02T15:04:05Z"
-	appVer          = "1.0"
+	appVer          = "1.1"
 )
 
 func main() {

@@ -41,7 +41,11 @@ func outputTabular(entries []entry) {
 	fmt.Printf("| %-15s | %-36s | %-20s | %-27s | %-27s |\n", "Type", "Server ID", "Server Name", "Reboot Window (UTC)", "Reboot Window (Local)")
 	fmt.Printf("| %-15s | %-36s | %-20s | %-27s | %-27s |\n", hashes(15), hashes(36), hashes(20), hashes(27), hashes(27))
 	for _, s := range entries {
-		fmt.Printf("| %-9s (%s) | %-36s | %-20s | %-12s - %-12s | %-12s - %-12s |\n", s.GenType, s.Region,
+		region := "(" + s.Region + ")"
+		if s.GenType == "First Gen" {
+			region = ""
+		}
+		fmt.Printf("| %-9s %-5s | %-36s | %-20s | %-12s - %-12s | %-12s - %-12s |\n", s.GenType, region,
 			s.Server.ID, elide(s.Server.Name), parseTime(s.WindowStart), parseTime(s.WindowEnd),
 			parseTime(s.WindowStart.Local()), parseTime(s.WindowEnd.Local()))
 	}
