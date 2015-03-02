@@ -46,4 +46,4 @@ done
 cf_cdn_ssl_url=$(curl -s -I $cf_cdn_api_url/$CONTAINER_NAME \
     -H 'X-Auth-Token: '$token | grep 'X-Cdn-Ssl-Uri' | awk '{print $2}' | awk -F'\r' '{print $1}')
 cf_cdn_ssl_url=${cf_cdn_ssl_url}/releases/test_$app_version/
-echo "CDN SSL base URL: $cf_cdn_ssl_url"
+echo "cdn_ssl_base_url: $cf_cdn_ssl_url"
