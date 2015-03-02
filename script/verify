@@ -27,6 +27,7 @@ cd $VERIFY_TMPDIR
 echo "Downloading and verifying files in $VERIFY_TMPDIR"
 
 for FILE in ${FILES[@]}; do
+  echo "$FILE verifying"
   wget -q $BASE_URL/$FILE
   wget -q $BASE_URL/$FILE.sha1
   diff -wq <($SHA1SUM $FILE | perl -pe 's/(.*?)\s.*/$1/') <(cat $FILE.sha1)
