@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Verify the SHA1 checksum of the uploaded cs-reboot-info binaries
+
+if [ -z "$1" ]; then
+  echo "Usage: $0 BASE_URL"
+  echo "Example: $0 https://abc-123.ssl.cf5.rackcdn.com/releases/test_1.1/"
+  exit 1
+fi
+
+set -euo pipefail
+IFS=$'\n\t'
+
+BASE_URL=$1
+FILES=$(ls bin | grep -v sha)
+VERIFY_TMPDIR=$(mktemp -d 2>/dev/null || mktemp -d -t 'verify-cs-reboot-info')
+
+if [ -e /sbin/sha1 ]; then
+    SHA1SUM=/sbin/sha1
+elif [ -e /usr/bin/shasum ]; then
+    SHA1SUM=/usr/bin/shasum
+else
+    SHA1SUM=/usr/bin/sha1sum
+fi
+
+cd $VERIFY_TMPDIR
+echo "Downloading and verifying files in $VERIFY_TMPDIR"
+
+for FILE in ${FILES[@]}; do
+  echo "$FILE verifying"
+  wget -q $BASE_URL/$FILE
+  wget -q $BASE_URL/$FILE.sha1
+  diff -wq <($SHA1SUM $FILE | perl -pe 's/(.*?)\s.*/$1/') <(cat $FILE.sha1)
+  echo "$FILE verified"
+done
