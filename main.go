@@ -150,9 +150,7 @@ func main() {
 			outputCSV(entries)
 		}
 	} else {
-		fmt.Printf("cs-reboot-info version %s\n\n", appVer)
 		fmt.Printf("You have no Cloud Servers with an automated reboot scheduled.\n")
-		os.Exit(0)
 }
 
 // Regions acquires the service catalog and returns a slice of every region that contains a next-gen
