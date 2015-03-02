@@ -32,11 +32,11 @@ cf_api_url=$(echo "$response" | grep -i mosso | grep -i $RAX_REGION | grep -i pu
 # Determine app version
 app_version=$(grep 'appVer\s*=' main.go | awk -F\" '{print $2}')
 
-# Upload
+# Upload to test release "folder" in container
 for f in bin/cs-reboot-info_*; do
     echo "Publishing $f..."
     g=$(basename $f)
-    curl -s -X PUT -s $CF_API_URL/$CONTAINER_NAME/releases/$app_version/$g \
-	-H 'X-Auth-Token: '$token \
-	--data-binary @$f
+    curl -s -X PUT $cf_api_url/$CONTAINER_NAME/releases/test_$app_version/$g \
+	       -H 'X-Auth-Token: '$token \
+	       --data-binary @$f
 done
