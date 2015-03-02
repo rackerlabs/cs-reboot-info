@@ -28,6 +28,7 @@ response=$(curl -s -X POST $IDENTITY_URL/tokens \
 
 token=$(echo "$response" | grep -A5 token | grep id | awk -F\" '{print $4}')
 cf_api_url=$(echo "$response" | grep -i mosso | grep -i $RAX_REGION | grep -i publicURL | grep -v cdn | awk -F\" '{print $4}')
+cf_cdn_api_url=$(echo "$response" | grep -i cdn5 | grep -i publicURL | awk -F\" '{print $4}')
 
 # Determine app version
 app_version=$(grep 'appVer\s*=' main.go | awk -F\" '{print $2}')
@@ -40,3 +41,9 @@ for f in bin/cs-reboot-info_*; do
 	       -H 'X-Auth-Token: '$token \
 	       --data-binary @$f
 done
+
+# Determine CDN SSL base URL and print it out
+cf_cdn_ssl_url=$(curl -s -I $cf_cdn_api_url/$CONTAINER_NAME \
+    -H 'X-Auth-Token: '$token | grep 'X-Cdn-Ssl-Uri' | awk '{print $2}' | awk -F'\r' '{print $1}')
+cf_cdn_ssl_url=${cf_cdn_ssl_url}/releases/test_$app_version/
+echo "CDN SSL base URL: $cf_cdn_ssl_url"
