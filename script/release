@@ -15,7 +15,7 @@ script/cross
 script/checksum
 cdn_ssl_base_url=$(script/publish-to-test | grep 'cdn_ssl_base_url' | awk '{print $2}')
 script/verify $cdn_ssl_base_url
-if [$? -ne 0]; then
+if [ $? -ne 0 ]; then
     exit $?
 fi
 app_version=$(script/publish-to-prod | grep 'app_version_published' | awk '{print $2}')
