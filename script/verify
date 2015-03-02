@@ -12,7 +12,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 BASE_URL=$1
-FILES=$(ls bin)
+FILES=$(ls bin | grep -v sha)
 VERIFY_TMPDIR=$(mktemp -d 2>/dev/null || mktemp -d -t 'verify-cs-reboot-info')
 
 if [ -e /sbin/sha1 ]; then
