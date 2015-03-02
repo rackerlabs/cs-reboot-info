@@ -14,11 +14,13 @@ git pull
 script/cross
 script/checksum
 output=$(script/publish-to-test)
+echo "$output"
 cdn_ssl_base_url=$(echo "$output" | grep 'cdn_ssl_base_url' | awk '{print $2}')
 script/verify $cdn_ssl_base_url
 if [ $? -ne 0 ]; then
     exit $?
 fi
 output=$(script/publish-to-prod)
+echo "$output"
 app_version=$(echo "$output" | grep 'app_version_published' | awk '{print $2}')
 script/update-version-in-readme $app_version
