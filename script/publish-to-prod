@@ -39,7 +39,8 @@ for f in bin/cs-reboot-info_*; do
     g=$(basename $f)
     curl -s -X PUT $cf_api_url/$CONTAINER_NAME/releases/$app_version/$g \
 	       -H 'X-Auth-Token: '$token \
-        -H 'X-Copy-From: /$CONTAINER_NAME/releases/test_$app_version/$g'
+        -H 'X-Copy-From: /$CONTAINER_NAME/releases/test_$app_version/$g' \
+        -H 'Content-Length: 0'
 done
 
 echo "app_version_published: $app_version"
