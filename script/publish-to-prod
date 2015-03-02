@@ -35,11 +35,11 @@ app_version=$(grep 'appVer\s*=' main.go | awk -F\" '{print $2}')
 
 # Upload to prod release "folder" in container
 for f in bin/cs-reboot-info_*; do
-    echo "Publishing $f..."
+    echo "Publishing $f (copying)..."
     g=$(basename $f)
     curl -s -X PUT $cf_api_url/$CONTAINER_NAME/releases/$app_version/$g \
 	       -H 'X-Auth-Token: '$token \
-	       --data-binary @$f
+        -H 'X-Copy-From: /$CONTAINER_NAME/releases/test_$app_version/$g'
 done
 
 echo "app_version_published: $app_version"
