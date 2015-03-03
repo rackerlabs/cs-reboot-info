@@ -16,7 +16,6 @@ if [ -z ${RAX_API_KEY} ]; then
 fi
 
 # "Constants", LOL
-RAX_USERNAME=drgsites
 RAX_REGION=IAD
 CONTAINER_NAME=cs-reboot-info
 IDENTITY_URL=https://identity.api.rackspacecloud.com/v2.0
