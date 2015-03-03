@@ -2,7 +2,8 @@
 #
 # Update version in README.md
 
-set -e
+set -euo pipefail
+IFS=$'\n\t'
 
 ROOT=$(dirname $0)/..
 cd ${ROOT}

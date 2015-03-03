@@ -5,7 +5,8 @@
 # - RAX_API_KEY contains API key of Rackspace Cloud account where build artifacts
 #   are to be published.
 
-set -e
+set -euo pipefail
+IFS=$'\n\t'
 
 ROOT=$(dirname $0)/..
 cd ${ROOT}
