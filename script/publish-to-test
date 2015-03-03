@@ -8,9 +8,18 @@
 ROOT=$(dirname $0)/..
 cd ${ROOT}
 
+function usage() {
+    echo "Usage: RAX_USERNAME=xxxxxxxxxx RAX_API_KEY=yyyyyyyyyyyyyyyy $0"
+    echo "Example: RAX_USERNAME=acme_user RAX_API_KEY=4ed550eeac3dd12ef $0"
+    exit $1
+}
+
+if [ -z ${RAX_USERNAME} ]; then
+  usage 1
+fi
+
 if [ -z ${RAX_API_KEY} ]; then
-  echo "You must provide RAX_API_KEY to publish."
-  exit 1
+  usage 2
 fi
 
 set -euo pipefail
