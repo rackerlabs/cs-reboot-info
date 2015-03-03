@@ -11,11 +11,8 @@ script/cross
 script/checksum
 output=$(script/publish-to-test)
 echo "$output"
-cdn_ssl_base_url=$(echo "$output" | grep 'cdn_ssl_base_url' | awk '{print $2}')
-script/verify $cdn_ssl_base_url
-if [ $? -ne 0 ]; then
-    exit $?
-fi
+RELEASE_CDN_BASE_URL=$(echo "$output" | grep 'cdn_ssl_base_url' | awk '{print $2}')
+script/verify
 output=$(script/publish-to-prod)
 echo "$output"
 CS_REBOOT_INFO_APP_VERSION=$(echo "$output" | grep 'app_version_published' | awk '{print $2}')
