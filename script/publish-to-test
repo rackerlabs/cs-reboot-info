@@ -5,9 +5,6 @@
 # - RAX_API_KEY contains API key of Rackspace Cloud account where build artifacts
 #   are to be published.
 
-set -euo pipefail
-IFS=$'\n\t'
-
 ROOT=$(dirname $0)/..
 cd ${ROOT}
 
@@ -15,6 +12,9 @@ if [ -z ${RAX_API_KEY} ]; then
   echo "You must provide RAX_API_KEY to publish."
   exit 1
 fi
+
+set -euo pipefail
+IFS=$'\n\t'
 
 # "Constants", LOL
 RAX_REGION=IAD
