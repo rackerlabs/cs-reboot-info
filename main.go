@@ -151,6 +151,7 @@ func main() {
 		}
 	} else {
 		fmt.Printf("You have no Cloud Servers with an automated reboot scheduled.\n")
+	}
 }
 
 // Regions acquires the service catalog and returns a slice of every region that contains a next-gen
