@@ -96,12 +96,9 @@ func main() {
 			for _, server := range s {
 				entry, err := ConstructEntry(server, "Next Gen", region)
 				if err != nil {
-					if strings.Contains(err.Error(), "not present") {
-						continue
-					}
 					fmt.Printf("%s\n", err)
 					continue
-				} else {
+				} else if entry != nil {
 					entries = append(entries, *entry)
 				}
 			}
