@@ -14,8 +14,7 @@ if [ -z "$1" ]; then
 fi
 new_version=$1
 
-sed -i.bak "s#releases/[^/]*/#releases/$new_version/#g" README.md
-rm README.md.bak
+sed -i "s#releases/[^/]*/#releases/$new_version/#g" README.md
 
 echo "Links in README.md updated to version $new_version."
 echo "Please remember to commit updated README.md and push it to GitHub."
