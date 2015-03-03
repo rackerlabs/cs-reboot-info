@@ -19,7 +19,7 @@ import (
 const (
 	metadataKey     = "rax:reboot_window"
 	metadataTimeFmt = "2006-01-02T15:04:05Z"
-	appVer          = "1.1"
+	appVer          = "1.2"
 )
 
 func main() {
@@ -63,7 +63,7 @@ func main() {
 	provider.UserAgent.Prepend(fmt.Sprintf("cs-reboot-info/%s", appVer))
 
 	regions, fg := Regions(provider, opts)
-
+	fmt.Printf("cs-reboot-info version %s\n\n", appVer)
 	fmt.Printf("Regions with a Cloud Servers endpoint: %s\n", strings.Join(regions, ", "))
 	if fg {
 		fmt.Println("Found both First and Next Generation endpoints.")
@@ -149,6 +149,8 @@ func main() {
 		if *outputToCSV {
 			outputCSV(entries)
 		}
+	} else {
+		fmt.Printf("You have no Cloud Servers with an automated reboot scheduled.\n")
 	}
 }
 
