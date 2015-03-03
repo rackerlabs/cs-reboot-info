@@ -126,12 +126,9 @@ func main() {
 			for _, server := range s {
 				entry, err := ConstructEntry(server, "First Gen", fgRegion)
 				if err != nil {
-					if strings.Contains(err.Error(), "not present") {
-						continue
-					}
 					fmt.Printf("%s\n", err)
 					continue
-				} else {
+				} else if entry != nil {
 					entries = append(entries, *entry)
 				}
 			}
@@ -180,11 +177,12 @@ func Regions(provider *gophercloud.ProviderClient, opts gophercloud.AuthOptions)
 	return regions, fg
 }
 
-// ConstructEntry extracts the metadata key and builds an entry for a server.
+// ConstructEntry extracts the metadata key and builds an entry for a server. If the metadatum is
+// not present, nil will be returned.
 func ConstructEntry(server osV2Servers.Server, genType, region string) (*entry, error) {
 	window, ok := server.Metadata[metadataKey]
 	if !ok {
-		return nil, fmt.Errorf("Metadatum %s was not present in the result for server %s", metadataKey, server.ID)
+		return nil, nil
 	}
 
 	windowString, ok := window.(string)
