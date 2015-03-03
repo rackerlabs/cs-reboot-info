@@ -22,5 +22,5 @@ if [ $? -ne 0 ]; then
 fi
 output=$(script/publish-to-prod)
 echo "$output"
-app_version=$(echo "$output" | grep 'app_version_published' | awk '{print $2}')
-script/update-version-in-readme $app_version
+CS_REBOOT_INFO_APP_VERSION=$(echo "$output" | grep 'app_version_published' | awk '{print $2}')
+script/update-version-in-readme
