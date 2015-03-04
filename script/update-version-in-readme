@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# Update version in README.md
+
+ROOT=$(dirname $0)/..
+cd ${ROOT}
+
+if [ -z ${CS_REBOOT_INFO_APP_VERSION} ]; then
+    echo "Usage: CS_REBOOT_INFO_APP_VERSION=xx.yy $0"
+    echo "Example: CS_REBOOT_INFO_APP_VERSION=1.1 $0"
+    exit 1
+fi
+
+set -euo pipefail
+IFS=$'\n\t'
+
+sed -i "s#releases/[^/]*/#releases/$CS_REBOOT_INFO_APP_VERSION/#g" README.md
+
+echo "Links in README.md updated to version $new_version."
+echo "Please remember to commit updated README.md and push it to GitHub."

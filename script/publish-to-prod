@@ -1,0 +1,55 @@
+#!/bin/bash
+#
+# Publish build artifacts (binaries and SHA1 checksum files) to Cloud Files
+# Pre-requisites/input:
+# - RAX_API_KEY contains API key of Rackspace Cloud account where build artifacts
+#   are to be published.
+
+ROOT=$(dirname $0)/..
+cd ${ROOT}
+
+function usage() {
+    echo "Usage: RAX_USERNAME=xxxxxxxxxx RAX_API_KEY=yyyyyyyyyyyyyyyy $0"
+    echo "Example: RAX_USERNAME=acme_user RAX_API_KEY=4ed550eeac3dd12ef $0"
+    exit $1
+}
+
+if [ -z ${RAX_USERNAME} ]; then
+  usage 1
+fi
+
+if [ -z ${RAX_API_KEY} ]; then
+  usage 2
+fi
+
+set -euo pipefail
+IFS=$'\n\t'
+
+# "Constants", LOL
+RAX_REGION=IAD
+CONTAINER_NAME=cs-reboot-info
+IDENTITY_URL=https://identity.api.rackspacecloud.com/v2.0
+
+# Auth
+response=$(curl -s -X POST $IDENTITY_URL/tokens \
+    -H 'Content-Type: application/json' \
+    -d '{ "auth": { "RAX-KSKEY:apiKeyCredentials": { "username":"'$RAX_USERNAME'", "apiKey": "'$RAX_API_KEY'"}}}' | python -mjson.tool)
+
+token=$(echo "$response" | grep -A5 token | grep id | awk -F\" '{print $4}')
+cf_api_url=$(echo "$response" | grep -i mosso | grep -i $RAX_REGION | grep -i publicURL | grep -v cdn | awk -F\" '{print $4}')
+cf_cdn_api_url=$(echo "$response" | grep -i cdn5 | grep -i publicURL | awk -F\" '{print $4}')
+
+# Determine app version
+app_version=$(grep 'appVer\s*=' main.go | awk -F\" '{print $2}')
+
+# Upload to prod release "folder" in container
+for f in bin/cs-reboot-info_*; do
+    echo "Publishing $f (copying)..."
+    g=$(basename $f)
+    curl -s -X PUT $cf_api_url/$CONTAINER_NAME/releases/$app_version/$g \
+	       -H 'X-Auth-Token: '$token \
+        -H "X-Copy-From: /$CONTAINER_NAME/releases/test_$app_version/$g" \
+        -H 'Content-Length: 0'
+done
+
+echo "app_version_published: $app_version"

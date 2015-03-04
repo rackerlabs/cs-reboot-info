@@ -5,17 +5,30 @@
 # - RAX_API_KEY contains API key of Rackspace Cloud account where build artifacts
 #   are to be published.
 
-set -e
-
 ROOT=$(dirname $0)/..
 cd ${ROOT}
 
+function usage() {
+    echo "Usage: RAX_USERNAME=xxxxxxxxxx RAX_API_KEY=yyyyyyyyyyyyyyyy $0"
+    echo "Example: RAX_USERNAME=acme_user RAX_API_KEY=4ed550eeac3dd12ef $0"
+    exit $1
+}
+
+if [ -z ${RAX_USERNAME} ]; then
+  usage 1
+fi
+
+if [ -z ${RAX_API_KEY} ]; then
+  usage 2
+fi
+
+set -euo pipefail
+IFS=$'\n\t'
+
 # "Constants", LOL
-RAX_USERNAME=drgsites
 RAX_REGION=IAD
 CONTAINER_NAME=cs-reboot-info
 IDENTITY_URL=https://identity.api.rackspacecloud.com/v2.0
-CF_API_URL=https://storage101.iad3.clouddrive.com/v1/MossoCloudFS_a4792cf6-5b6e-49ea-b7d6-fe4fb7856b6f
 
 # Auth
 response=$(curl -s -X POST $IDENTITY_URL/tokens \
@@ -24,15 +37,22 @@ response=$(curl -s -X POST $IDENTITY_URL/tokens \
 
 token=$(echo "$response" | grep -A5 token | grep id | awk -F\" '{print $4}')
 cf_api_url=$(echo "$response" | grep -i mosso | grep -i $RAX_REGION | grep -i publicURL | grep -v cdn | awk -F\" '{print $4}')
+cf_cdn_api_url=$(echo "$response" | grep -i cdn5 | grep -i publicURL | awk -F\" '{print $4}')
 
 # Determine app version
 app_version=$(grep 'appVer\s*=' main.go | awk -F\" '{print $2}')
 
-# Upload
+# Upload to test release "folder" in container
 for f in bin/cs-reboot-info_*; do
     echo "Publishing $f..."
     g=$(basename $f)
-    curl -s -X PUT -s $CF_API_URL/$CONTAINER_NAME/releases/$app_version/$g \
-	-H 'X-Auth-Token: '$token \
-	--data-binary @$f
+    curl -s -X PUT $cf_api_url/$CONTAINER_NAME/releases/test_$app_version/$g \
+	       -H 'X-Auth-Token: '$token \
+	       --data-binary @$f
 done
+
+# Determine CDN SSL base URL and print it out
+cf_cdn_ssl_url=$(curl -s -I $cf_cdn_api_url/$CONTAINER_NAME \
+    -H 'X-Auth-Token: '$token | grep 'X-Cdn-Ssl-Uri' | awk '{print $2}' | awk -F'\r' '{print $1}')
+cf_cdn_ssl_url=${cf_cdn_ssl_url}/releases/test_$app_version/
+echo "cdn_ssl_base_url: $cf_cdn_ssl_url"

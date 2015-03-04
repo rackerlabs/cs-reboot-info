@@ -1,16 +1,33 @@
 #!/bin/bash
 
-set -e
-
 ROOT=$(dirname $0)/..
 cd ${ROOT}
 
-if [ -z ${RAX_API_KEY} ]; then
-  echo "You must provide RAX_API_KEY to publish."
-  exit 1
+function usage() {
+    echo "Usage: RAX_USERNAME=xxxxxxxxxx RAX_API_KEY=yyyyyyyyyyyyyyyy $0"
+    echo "Example: RAX_USERNAME=acme_user RAX_API_KEY=4ed550eeac3dd12ef $0"
+    exit $1
+}
+
+if [ -z ${RAX_USERNAME} ]; then
+  usage 1
 fi
+
+if [ -z ${RAX_API_KEY} ]; then
+  usage 2
+fi
+
+set -euo pipefail
+IFS=$'\n\t'
 
 git pull
 script/cross
 script/checksum
-script/publish
+output=$(script/publish-to-test)
+echo "$output"
+export RELEASE_CDN_BASE_URL=$(echo "$output" | grep 'cdn_ssl_base_url' | awk '{print $2}')
+script/verify
+output=$(script/publish-to-prod)
+echo "$output"
+export CS_REBOOT_INFO_APP_VERSION=$(echo "$output" | grep 'app_version_published' | awk '{print $2}')
+script/update-version-in-readme
