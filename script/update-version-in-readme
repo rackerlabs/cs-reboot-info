@@ -14,7 +14,7 @@ fi
 set -euo pipefail
 IFS=$'\n\t'
 
-sed -i "s#releases/[^/]*/#releases/$CS_REBOOT_INFO_APP_VERSION/#g" README.md
+sed -i .bak "s#releases/[^/]*/#releases/$CS_REBOOT_INFO_APP_VERSION/#g" README.md
 
-echo "Links in README.md updated to version $new_version."
+echo "Links in README.md updated to version $CS_REBOOT_INFO_APP_VERSION."
 echo "Please remember to commit updated README.md and push it to GitHub."
